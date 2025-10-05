@@ -1,7 +1,5 @@
-import "./style.css";
+import Canvas from "./shared/canvas/Canvas";
 
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div>
-    <h1>Platform game</h1>
-  </div>
-`;
+const canvasElement = document.querySelector("canvas#canvas");
+
+new Canvas(canvasElement);
