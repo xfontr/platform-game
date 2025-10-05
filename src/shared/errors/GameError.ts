@@ -1,10 +1,8 @@
+import type { Context } from "../types/context";
 import type { OverloadedParameters } from "../types/utility";
 import { toErrorKey, toErrorName } from "./errorFormatter";
 
-class GameError<
-  T extends Uppercase<string>,
-  E extends Error | string
-> extends Error {
+class GameError<T extends Context, E extends Error | string> extends Error {
   declare name: OverloadedParameters<typeof toErrorName<T>>;
 
   constructor(context: T, error?: E) {

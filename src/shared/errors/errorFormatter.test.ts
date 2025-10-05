@@ -1,19 +1,18 @@
-import { CONTEXT, DEFAULT_ERROR_NAME } from "../../configs/constants";
+import { CONTEXT_TEST, DEFAULT_ERROR_NAME } from "../../configs/constants";
 import { toErrorKey, toErrorName } from "./errorFormatter";
 
-const context = CONTEXT.test;
-const namedContext = `[${context}]`;
+const namedContext = `[${CONTEXT_TEST}]`;
 
 describe("toErrorName", () => {
   it(`'${namedContext} ${DEFAULT_ERROR_NAME}' when context is provided`, () => {
-    const result = toErrorName(context);
+    const result = toErrorName(CONTEXT_TEST);
 
     expect(result).toBe(`${namedContext} ${DEFAULT_ERROR_NAME}`);
   });
 
   it(`'${namedContext} Error' when context and error are provided`, () => {
     const error = new Error("test");
-    const result = toErrorName(context, error);
+    const result = toErrorName(CONTEXT_TEST, error);
 
     expect(result).toBe(`${namedContext} Error`);
   });
@@ -21,12 +20,12 @@ describe("toErrorName", () => {
 
 describe("toErrorKey", () => {
   it("should return error key with default 'unknown'", () => {
-    const result = toErrorKey(CONTEXT.test);
-    expect(result).toBe(`error.${CONTEXT.test.toLowerCase()}.unknown`);
+    const result = toErrorKey(CONTEXT_TEST);
+    expect(result).toBe(`error.${CONTEXT_TEST.toLowerCase()}.unknown`);
   });
 
   it("should return error key with provided key", () => {
-    const result = toErrorKey(CONTEXT.test, "INVALID");
-    expect(result).toBe(`error.${CONTEXT.test.toLowerCase()}.INVALID`);
+    const result = toErrorKey(CONTEXT_TEST, "INVALID");
+    expect(result).toBe(`error.${CONTEXT_TEST.toLowerCase()}.INVALID`);
   });
 });
