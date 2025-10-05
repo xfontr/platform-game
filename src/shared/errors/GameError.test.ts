@@ -1,5 +1,5 @@
 import { CONTEXT_TEST } from "../../configs/constants";
-import { toErrorKey, toErrorName } from "./errorFormatter";
+import { toErrorKey, toErrorName } from "./errors";
 import GameError from "./GameError";
 
 /**

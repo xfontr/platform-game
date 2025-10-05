@@ -1,4 +1,4 @@
-import type { Context } from "../shared/types/context";
+import type { Context } from "../types/context";
 
 export const CONTEXT_TEST: Context = "TEST";
 

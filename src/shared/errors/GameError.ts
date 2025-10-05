@@ -1,6 +1,6 @@
-import type { Context } from "../types/context";
-import type { OverloadedParameters } from "../types/utility";
-import { toErrorKey, toErrorName } from "./errorFormatter";
+import type { Context } from "../../types/context";
+import type { OverloadedParameters } from "../../types/utility";
+import { toErrorKey, toErrorName } from "./errors";
 
 class GameError<T extends Context, E extends Error | string> extends Error {
   declare name: OverloadedParameters<typeof toErrorName<T>>;
