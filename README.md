@@ -13,3 +13,7 @@ No autoformatter setup for now: only one dev working on this.
 ### Commit and push hooks
 
 For now, skipping
+
+### Testing
+
+As of now unit testing and, particularly, TDD, is helping me to experiment new patterns and speed up my dev time. As soon as it stops being efficient, will also cut testing.

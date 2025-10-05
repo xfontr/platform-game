@@ -1,5 +1,5 @@
 import { CONTEXT_TEST, DEFAULT_ERROR_NAME } from "../../configs/constants";
-import { toErrorKey, toErrorName } from "./errorFormatter";
+import { toErrorKey, toErrorName } from "./errors";
 
 const namedContext = `[${CONTEXT_TEST}]`;
 
