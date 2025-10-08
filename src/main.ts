@@ -1,5 +1,4 @@
-import Canvas from "./shared/canvas/Canvas";
+import canvas from "./shared/canvas";
+import "./style.css";
 
-const canvasElement = document.querySelector("canvas#canvas");
-
-new Canvas(canvasElement);
+canvas.ctx?.lineTo(100, 100);

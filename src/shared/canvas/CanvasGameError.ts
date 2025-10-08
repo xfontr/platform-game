@@ -1,6 +1,6 @@
 import GameError from "../errors/GameError";
 
-type CanvasError = "not-found";
+type CanvasError = "not-found" | "multiple-instances";
 
 class CanvasGameError<E extends Error | CanvasError> extends GameError<
   "CANVAS",

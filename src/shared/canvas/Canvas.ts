@@ -1,14 +1,22 @@
+import SizeObserver from "../../helpers/SizeObserver";
 import CanvasGameError from "./CanvasGameError";
+import assert from "../../utils/assert";
 
-class Canvas {
-  public element: HTMLCanvasElement;
+let instantiated = false;
 
-  constructor(element?: HTMLCanvasElement) {
-    if (!element) {
-      throw new CanvasGameError("not-found");
-    }
+class Canvas extends SizeObserver<HTMLCanvasElement> {
+  public ctx;
 
-    this.element = element;
+  constructor(element?: HTMLCanvasElement | null) {
+    assert(!instantiated, () => new CanvasGameError("multiple-instances"));
+
+    if (!element) throw new CanvasGameError("not-found");
+
+    instantiated = true;
+
+    super(element);
+
+    this.ctx = element.getContext("2d");
   }
 }
 
