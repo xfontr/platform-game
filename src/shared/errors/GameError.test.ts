@@ -1,9 +1,8 @@
-import { CONTEXT_TEST } from "../../configs/constants";
-import { toErrorKey, toErrorName } from "./errors";
+import { CONTEXT_TEST } from "./errors.constants";
 import GameError from "./GameError";
 
 /**
- * It's going to be a lot more but for testomg to be valid we at least need to ensure a bare minimum.
+ * It's going to be a lot more but for test to be valid we at least need to ensure a bare minimum.
  */
 const MIN_STACK_TRACE = 3;
 /**
@@ -17,23 +16,33 @@ describe("GameError", () => {
     const normalError = new Error("test");
     const gameError = new GameError(CONTEXT_TEST, normalError);
 
-    expect(gameError.name).toBe(toErrorName(CONTEXT_TEST, normalError));
-    expect(gameError.message).toBe(normalError.message);
+    expect(gameError.name).toBe("[TEST] Error");
+    expect(gameError.message).toBe("test");
   });
 
   it("should create an error out of an error ID", () => {
     const errorKey = "error.key";
     const gameError = new GameError(CONTEXT_TEST, errorKey);
 
-    expect(gameError.name).toBe(toErrorName(CONTEXT_TEST));
-    expect(gameError.message).toBe(toErrorKey(CONTEXT_TEST, errorKey));
+    expect(gameError.name).toBe("[TEST] error.default");
+    expect(gameError.message).toBe("error.test.error.key");
+  });
+
+  it("should create an error out of a normal Error and ID", () => {
+    const errorKey = "error.key";
+    const normalError = new Error("test");
+
+    const gameError = new GameError(CONTEXT_TEST, normalError, errorKey);
+
+    expect(gameError.name).toBe("[TEST] Error");
+    expect(gameError.message).toBe("error.test.error.key");
   });
 
   it("should create a empty error with only the context", () => {
     const gameError = new GameError(CONTEXT_TEST);
 
-    expect(gameError.name).toBe(toErrorName(CONTEXT_TEST));
-    expect(gameError.message).toBe(toErrorKey(CONTEXT_TEST));
+    expect(gameError.name).toBe("[TEST] error.default");
+    expect(gameError.message).toBe("error.test.unknown");
   });
 
   it("should preserve a valid stack trace", () => {
