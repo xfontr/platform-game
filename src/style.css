@@ -1,10 +1,13 @@
 body {
-    height: 100vh;
-    margin: 0;
+  height: 100vh;
+  margin: 0;
 }
 
-canvas#canvas {
-    width: 100%;
-    height: 100%;
-    background-color: blanchedalmond;
+.app {
+  height: 100vh;
+
+  &--example {
+    height: 400px;
+    width: 400px;
+  }
 }
