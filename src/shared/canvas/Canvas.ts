@@ -1,43 +1,22 @@
+import SizeObserver from "../../helpers/SizeObserver";
 import CanvasGameError from "./CanvasGameError";
+import assert from "../../utils/assert";
 
-type ResizeCallback = (element: HTMLCanvasElement) => void;
+let instantiated = false;
 
-class Canvas {
-  private resizeObserver: ResizeObserver | undefined;
-
-  public element: HTMLCanvasElement;
-  public contentRect: DOMRectReadOnly;
-
-  private resizeCallbackStack: ResizeCallback[] = [];
+class Canvas extends SizeObserver<HTMLCanvasElement> {
+  public ctx;
 
   constructor(element?: HTMLCanvasElement | null) {
-    if (!element) {
-      throw new CanvasGameError("not-found");
-    }
+    assert(!instantiated, () => new CanvasGameError("multiple-instances"));
 
-    this.element = element;
-    this.contentRect = element.getBoundingClientRect();
+    if (!element) throw new CanvasGameError("not-found");
 
-    this.observeResize(this.element);
-  }
+    instantiated = true;
 
-  private observeResize<T extends Element>(element: T) {
-    this.resizeObserver = new ResizeObserver(([element]) => {
-      this.contentRect = element.contentRect;
-      this.resizeCallbackStack.forEach((callback) => {
-        callback(this.element);
-      });
-    });
+    super(element);
 
-    this.resizeObserver.observe(element);
-  }
-
-  onResize(callback: ResizeCallback) {
-    this.resizeCallbackStack.push(callback);
-  }
-
-  onDestroy() {
-    this.resizeObserver?.disconnect();
+    this.ctx = element.getContext("2d");
   }
 }
 
