@@ -1,4 +1,6 @@
-import canvas from "./shared/canvas";
-import "./style.css";
+import { Application } from "pixi.js";
+import app from "./shared/app";
 
-canvas.ctx?.lineTo(100, 100);
+(async () => {
+  await app.init(new Application());
+})();
