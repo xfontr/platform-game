@@ -1,5 +1,4 @@
 import type { DEFAULT_ERROR_NAME } from "./errors.constants";
-import type { Context } from "./errors.types";
 import GameErrorFormat from "./GameErrorFormat";
 
 /**
@@ -8,7 +7,7 @@ import GameErrorFormat from "./GameErrorFormat";
  * Can be instantiated with either a raw `Error` or a predefined key,
  * or both.
  */
-class GameError<C extends Context> extends GameErrorFormat<C> {
+class GameError<C extends Uppercase<string>> extends GameErrorFormat<C> {
   declare name: `[${C}] ${string}` | `[${C}] ${typeof DEFAULT_ERROR_NAME}`;
 
   /**

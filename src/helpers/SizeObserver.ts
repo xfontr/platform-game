@@ -16,20 +16,16 @@ type ResizeCallback<T extends Element> = (
  * }
  */
 class SizeObserver<T extends Element> {
-  public contentRect: DOMRectReadOnly;
-
   private resizeObserver: ResizeObserver | undefined;
   private resizeCallbackStack: ResizeCallback<T>[] = [];
   protected element: T;
 
   constructor(element: T) {
     this.element = element;
-    this.contentRect = element.getBoundingClientRect();
   }
 
   private observeResize(): void {
     this.resizeObserver = new ResizeObserver(([element]) => {
-      this.contentRect = element.contentRect;
       this.resizeCallbackStack.forEach((callback) => {
         callback(element.contentRect, this.element);
       });

@@ -1,8 +1,7 @@
 import { DEFAULT_ERROR_NAME, UNKNOWN_ERROR_NAME } from "./errors.constants";
-import type { Context } from "./errors.types";
 
-class GameErrorFormat<C extends Context> extends Error {
-  private context: C;
+class GameErrorFormat<C extends Uppercase<string>> extends Error {
+  readonly context: C;
 
   constructor(context: C, message?: string) {
     super(message);
