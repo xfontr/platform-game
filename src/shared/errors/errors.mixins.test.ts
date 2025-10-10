@@ -4,7 +4,7 @@ import { DEFAULT_ERROR_NAME } from "./errors.constants";
 
 describe("DomainError", () => {
   const CONTEXT = "APP" as const;
-  const AppError = DomainError<typeof CONTEXT, "not-found" | "init-failed">(
+  const AppError = DomainError<"not-found" | "init-failed", typeof CONTEXT>(
     CONTEXT
   );
 

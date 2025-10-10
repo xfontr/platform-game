@@ -1,5 +1,5 @@
-import type { Context } from "./errors.types";
 import GameError from "./GameError";
+import assert from "../../utils/assert";
 
 /**
  * Mixin to create domain-specific error classes.
@@ -20,20 +20,26 @@ import GameError from "./GameError";
  * @source Mixins: https://www.typescriptlang.org/docs/handbook/mixins.html
  * @source Constructor overloading: https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads
  */
-export function DomainError<T extends Context, Errors extends string>(
-  context: T
-) {
+export function DomainError<
+  Errors extends string,
+  T extends Uppercase<string> = Uppercase<string>
+>(context: T) {
   return class DomainError extends GameError<T> {
     /** Construct an error using a native Error instance and optional domain key. */
-    constructor(error: Error, key?: Errors);
+    constructor(error: Error | unknown, key?: Errors);
 
     /** Construct an error using only a domain-specific key. */
     constructor(key: Errors);
-    constructor(errorOrKey: Error | Errors, key?: Errors) {
+    constructor(errorOrKey: Error | unknown | Errors, key?: Errors) {
       if (errorOrKey instanceof Error) {
         super(context, errorOrKey, key);
         return;
       }
+
+      assert(typeof errorOrKey === "string", () => {
+        console.warn(errorOrKey, key);
+        throw new Error("Unexpected error type");
+      });
 
       super(context, errorOrKey);
     }
