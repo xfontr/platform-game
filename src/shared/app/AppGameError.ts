@@ -1,11 +1,12 @@
 import { DomainError } from "../errors/errors.mixins";
 
-export type AppError =
+export type Context = "APP";
+export type Error =
   | "not-found"
   | "multiple-instances"
   | "initialization-failed"
   | "not-initialized";
 
-const AppGameError = DomainError<"APP", AppError>("APP");
+const AppGameError = DomainError<Error, Context>("APP");
 
 export default AppGameError;
