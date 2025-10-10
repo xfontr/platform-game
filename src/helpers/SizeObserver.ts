@@ -12,7 +12,7 @@ type ResizeCallback<T extends Element> = (
  * const observer = new SizeObserver(element);
  *
  * observer.onResize((contentRect, element) => {
- *   console.log('Element resized:', contentRect, element);
+ *   // ...
  * }
  */
 class SizeObserver<T extends Element> {

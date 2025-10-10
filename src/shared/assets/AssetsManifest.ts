@@ -24,19 +24,13 @@ class AssetsManifest {
     return this;
   }
 
-  public async init(): Promise<void> {
+  public get(): Manifest {
     assert(
       () => Object.keys(this.bundles).length,
       () => new AssetsGameError("empty-manifest")
     );
 
-    const manifest: Manifest = { bundles: Object.values(this.bundles) };
-
-    try {
-      await Assets.init({ manifest });
-    } catch (error) {
-      new AssetsGameError(error, "manifest");
-    }
+    return { bundles: Object.values(this.bundles) };
   }
 }
 
