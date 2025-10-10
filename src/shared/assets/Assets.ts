@@ -1,9 +1,9 @@
-import { type UnresolvedAsset } from "pixi.js";
+import { type UnresolvedAsset, Assets as PixiAssets } from "pixi.js";
 import assert from "../../utils/assert";
 import AssetsGameError from "./AssetsGameError";
 
 class Assets {
-  private assets: UnresolvedAsset[] = [];
+  private assets: Record<string, UnresolvedAsset[]> = {};
   private name: string;
 
   constructor(name: string) {
@@ -13,7 +13,8 @@ class Assets {
   public add(size: number, modifier: string): this {
     const suffix = modifier ? `${modifier}.png` : "png";
 
-    this.assets.push(
+    this.assets[modifier] ??= [];
+    this.assets[modifier].push(
       ...Array.from({ length: size }, (_, index) => ({
         alias: `${index}.${this.name}.${modifier}`,
         src: `/assets/${this.name}/${index}.${suffix}`,
@@ -23,12 +24,23 @@ class Assets {
     return this;
   }
 
+  public getSprite(modifier: string): ReturnType<(typeof PixiAssets)["get"]>[] {
+    assert(
+      this.assets[modifier].length,
+      () => new AssetsGameError("empty-sprite")
+    );
+
+    return this.assets[modifier];
+  }
+
   public get(): UnresolvedAsset[] {
+    const unresolvedAssets = Object.values(this.assets).flat();
+
     assert(
       (): boolean => {
         const foundMap: Record<string, undefined> = {};
 
-        return this.assets.reduce((duplicate, { alias }) => {
+        return unresolvedAssets.reduce((duplicate, { alias }) => {
           if (foundMap[alias as string] || duplicate) return !duplicate;
           foundMap[alias as string] = undefined;
           return true;
@@ -37,9 +49,9 @@ class Assets {
       () => new AssetsGameError("duplicate")
     );
 
-    assert(this.assets.length, () => new AssetsGameError("empty-assets"));
+    assert(unresolvedAssets.length, () => new AssetsGameError("empty-assets"));
 
-    return this.assets;
+    return unresolvedAssets;
   }
 }
 

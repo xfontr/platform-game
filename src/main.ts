@@ -5,32 +5,32 @@ import AssetsManifest from "./shared/assets/AssetsManifest";
 import { character } from "./features/character/character.assets";
 
 const manifest = new AssetsManifest().add("game", character);
-console.log(character.get());
 
 (async () => {
   await app.init(new Application());
-  await manifest.init();
+
+  Assets.init({ manifest: manifest.get() });
 
   await Assets.loadBundle("game");
 
   const canvas = app.get();
 
-  const walkTextures = [
-    Assets.get("0.character.walk"),
-    Assets.get("1.character.walk"),
-  ];
+  const walkTextures = character
+    .getSprite("walk")
+    .map(({ alias }) => Assets.get(alias as string));
 
-  // 4. Create an AnimatedSprite
-  const character = new AnimatedSprite(walkTextures);
+  const hero = new AnimatedSprite(walkTextures);
 
-  // 5. Set animation speed and start it
-  character.animationSpeed = 0.1; // speed (0.1 is slow, 1 is fast)
-  character.play();
+  hero.animationSpeed = 0.1;
+  hero.play();
+  hero.x = canvas.canvas.width / 2;
+  hero.y = canvas.canvas.height / 2;
+  hero.anchor.set(0.5);
 
-  // 6. Position the character and add to stage
-  character.x = canvas.canvas.width / 2;
-  character.y = canvas.canvas.height / 2;
-  character.anchor.set(0.5);
+  canvas.stage.addChild(hero);
 
-  canvas.stage.addChild(character);
+  app.onResize(({ width, height }) => {
+    hero.x = width / 2;
+    hero.y = height / 2;
+  });
 })();
