@@ -18,19 +18,31 @@ class App extends SizeObserver<HTMLDivElement> {
     super(container);
   }
 
-  public async init(app: Application<Renderer>): Promise<typeof this> {
-    if (this.app) return this;
+  private mount(app: Application<Renderer>): void {
+    this.element.appendChild(app.canvas);
+    this.app = app;
+
+    this.onResize(({ width, height }) => {
+      this.app!.renderer.resize(width, height);
+    });
+  }
+
+  public async init(app: Application<Renderer>): Promise<void> {
+    if (this.app) return;
+
+    const { clientHeight, clientWidth } = this.element;
 
     try {
-      await app.init({ background: "black" });
+      await app.init({
+        background: "black",
+        width: clientWidth,
+        height: clientHeight,
+      });
     } catch (error) {
-      throw new AppGameError(error as Error, "initialization-failed");
+      throw new AppGameError(error, "initialization-failed");
     }
 
-    this.app = app;
-    this.element.appendChild(app.canvas);
-
-    return this;
+    this.mount(app);
   }
 
   public get(): Application<Renderer> {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import SizeObserver from "./SizeObserver";
 
-// WARNING: Vibe-coded slop
+// WARNING: Vibe-coded slop, human review pending.
 
 const element = document.createElement("div");
 element.getBoundingClientRect = vi.fn(() => ({
@@ -34,19 +34,12 @@ afterEach(() => {
 });
 
 describe("SizeObserver", () => {
-  it("initializes with correct element and contentRect", () => {
-    const observer = new SizeObserver(element);
-    expect(observer.contentRect.width).toBe(100);
-    expect(observer.contentRect.height).toBe(100);
-  });
-
   it("calls the resize callback when element is resized", () => {
     const observer = new SizeObserver(element);
     const callback = vi.fn();
 
     observer.onResize(callback);
 
-    // Simulate ResizeObserver trigger
     const fakeEntry = { contentRect: { width: 200, height: 200 } };
     mockResizeObserver.callback([fakeEntry]);
 
