@@ -9,6 +9,7 @@ const assets = new Assets("character")
 const hero = new Hero({
   width: 30,
   height: 40,
+  speed: 3,
 }).setAssets(assets);
 
 export default hero;

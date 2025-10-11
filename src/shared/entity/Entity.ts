@@ -6,21 +6,23 @@ import { DEFAULT_STATE } from "../../configs/constants";
 import type { UnresolvedAsset } from "pixi.js";
 
 class Entity<Modifiers extends string = never> {
-  public x?: number;
-  public y?: number;
+  public x = 0;
+  public y = 0;
   public width: number;
   public height: number;
   public origin = 0.5;
   public animationSpeed = 0.1;
   public state: Modifiers | typeof DEFAULT_STATE = DEFAULT_STATE;
+  public speed: number;
 
   public assets?: Assets<Modifiers>;
 
-  constructor({ width, height, animationSpeed, origin }: EntityConfig) {
+  constructor({ width, height, animationSpeed, origin, speed }: EntityConfig) {
     this.width = width;
     this.height = height;
     this.origin = origin ?? this.origin;
     this.animationSpeed = animationSpeed ?? this.animationSpeed;
+    this.speed = speed ?? 1;
   }
 
   protected getSprite(): UnresolvedAsset[] {
@@ -38,9 +40,15 @@ class Entity<Modifiers extends string = never> {
     return this;
   }
 
-  public get() {
-    assert(this.y && this.x, () => new EntityGameError("position-not-set"));
+  public moveX(direction: 1 | -1 | (number & {})) {
+    this.x = this.x + this.speed * direction;
+  }
 
+  public moveY(direction: 1 | -1 | (number & {})) {
+    this.y = this.y + this.speed * direction;
+  }
+
+  public get() {
     return {
       x: this.x,
       y: this.y,

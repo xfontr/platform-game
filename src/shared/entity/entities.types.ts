@@ -5,6 +5,7 @@ export interface EntityConfig {
   height: number;
   origin?: number;
   animationSpeed?: number;
+  speed?: number;
 }
 
 export type ModifierType<A> = A extends Assets<infer M> ? M : never;

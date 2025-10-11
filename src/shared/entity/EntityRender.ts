@@ -34,8 +34,6 @@ class EntityRender<Modifiers extends string = never> extends Entity<Modifiers> {
 
     this.state = state;
 
-    // this.updateAnimatedSprite();
-
     return this;
   }
 

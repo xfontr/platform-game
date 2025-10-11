@@ -37,29 +37,26 @@ const manifest = new AssetsManifest().add("game", heroInstance.assets!);
   canvas.stage.addChild(hero.sprite!);
 
   const keys = new Set<string>();
-  const baseSpeed = 3;
 
   const moveHero = () => {
     const isRunning = keys.has("ShiftLeft") || keys.has("ShiftRight");
-    const speed = isRunning ? baseSpeed * 1.5 : baseSpeed;
-    heroInstance.animationSpeed = isRunning
-      ? animationSpeed * 1.5
-      : animationSpeed;
+    if (isRunning) heroInstance.run();
+    if (!isRunning) heroInstance.walk();
 
     // Horizontal movement
     if (keys.has("ArrowRight") || keys.has("KeyD")) {
-      heroInstance.x += speed;
+      heroInstance.moveX(1);
       hero.sprite!.scale.x = Math.abs(hero.sprite!.scale.x); // face right
     }
 
     if (keys.has("ArrowLeft") || keys.has("KeyA")) {
-      heroInstance.x -= speed;
+      heroInstance.moveX(-1);
       hero.sprite!.scale.x = -Math.abs(hero.sprite!.scale.x); // face left (mirrored)
     }
 
     // Vertical movement
-    if (keys.has("ArrowUp") || keys.has("KeyW")) heroInstance.y -= speed;
-    if (keys.has("ArrowDown") || keys.has("KeyS")) heroInstance.y += speed;
+    if (keys.has("ArrowUp") || keys.has("KeyW")) heroInstance.moveY(-1);
+    if (keys.has("ArrowDown") || keys.has("KeyS")) heroInstance.moveY(1);
 
     hero.update();
   };
