@@ -1,5 +1,5 @@
-import Entity from "../../shared/entities/Entity";
+import EntityRender from "../../shared/entity/EntityRender";
 
-class Hero extends Entity {}
+class Hero extends EntityRender {}
 
 export default Hero;
