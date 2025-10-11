@@ -1,6 +1,7 @@
-import { type UnresolvedAsset, Assets as PixiAssets } from "pixi.js";
+import { type UnresolvedAsset } from "pixi.js";
 import assert from "../../utils/assert";
 import AssetsGameError from "./AssetsGameError";
+import type { DEFAULT_STATE } from "../../configs/constants";
 
 class Assets<Modifiers extends string = never> {
   protected assets: Record<string, UnresolvedAsset[]> = {};
@@ -27,9 +28,10 @@ class Assets<Modifiers extends string = never> {
     return this;
   }
 
-  public getSprite(
-    modifier: Modifiers
-  ): ReturnType<(typeof PixiAssets)["get"]>[] {
+  /**
+   * Pixi does not provide a more strict type, so for now `unknown[]` will have to do.
+   */
+  public getSprite(modifier: Modifiers | typeof DEFAULT_STATE) {
     assert(
       this.assets[modifier]?.length,
       () => new AssetsGameError("empty-sprite")
