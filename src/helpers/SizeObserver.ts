@@ -17,7 +17,7 @@ type ResizeCallback<T extends Element> = (
  */
 class SizeObserver<T extends Element> {
   private resizeObserver: ResizeObserver | undefined;
-  private resizeCallbackStack: ResizeCallback<T>[] = [];
+  private resizeCallbackStack: Set<ResizeCallback<T>> = new Set();
   protected element: T;
 
   constructor(element: T) {
@@ -37,19 +37,33 @@ class SizeObserver<T extends Element> {
   /**
    * Registers a callback to run whenever the element is resized.
    */
-  onResize(callback: ResizeCallback<T>): void {
-    this.resizeCallbackStack.push(callback);
+  public onResize<C extends ResizeCallback<T>>(callback: C): C {
+    this.resizeCallbackStack.add(callback);
 
-    if (this.resizeCallbackStack.length !== 1) return;
+    if (this.resizeCallbackStack.size !== 1) return callback;
 
     this.observeResize();
+    return callback;
   }
 
   /**
-   * Cleans up the observer.
+   * Cleans up a specific callback.
    */
-  onDestroy(): void {
+  public removeListener(callback: ResizeCallback<T>): void {
+    this.resizeCallbackStack.delete(callback);
+
+    if (this.resizeCallbackStack.size) return;
+
+    this.resizeObserver?.unobserve(this.element);
+  }
+
+  /**
+   * Ensures no more listeners will ever work
+   */
+  public destroy() {
+    this.resizeCallbackStack = new Set();
     this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
   }
 }
 

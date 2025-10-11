@@ -2,7 +2,6 @@ import {
   type AssetsBundle,
   type AssetsManifest as Manifest,
   type UnresolvedAsset,
-  Assets,
 } from "pixi.js";
 import type AssetsType from "./Assets";
 import AssetsGameError from "./AssetsGameError";

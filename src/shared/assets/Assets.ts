@@ -2,15 +2,18 @@ import { type UnresolvedAsset, Assets as PixiAssets } from "pixi.js";
 import assert from "../../utils/assert";
 import AssetsGameError from "./AssetsGameError";
 
-class Assets {
-  private assets: Record<string, UnresolvedAsset[]> = {};
-  private name: string;
+class Assets<Modifiers extends string = never> {
+  protected assets: Record<string, UnresolvedAsset[]> = {};
+  protected name: string;
 
   constructor(name: string) {
     this.name = name;
   }
 
-  public add(size: number, modifier: string): this {
+  public add<NewModifier extends string>(
+    size: number,
+    modifier: NewModifier
+  ): Assets<Modifiers | NewModifier> {
     const suffix = modifier ? `${modifier}.png` : "png";
 
     this.assets[modifier] ??= [];
@@ -24,34 +27,39 @@ class Assets {
     return this;
   }
 
-  public getSprite(modifier: string): ReturnType<(typeof PixiAssets)["get"]>[] {
+  public getSprite(
+    modifier: Modifiers
+  ): ReturnType<(typeof PixiAssets)["get"]>[] {
     assert(
-      this.assets[modifier].length,
+      this.assets[modifier]?.length,
       () => new AssetsGameError("empty-sprite")
     );
 
     return this.assets[modifier];
   }
 
+  private checkIfDuplicates(assetList: UnresolvedAsset[]): boolean {
+    const seen = new Set<string>();
+
+    for (const { alias } of assetList) {
+      if (seen.has(alias as string)) return false;
+      seen.add(alias as string);
+    }
+
+    return true;
+  }
+
   public get(): UnresolvedAsset[] {
-    const unresolvedAssets = Object.values(this.assets).flat();
+    const assets = Object.values(this.assets).flat();
 
     assert(
-      (): boolean => {
-        const foundMap: Record<string, undefined> = {};
-
-        return unresolvedAssets.reduce((duplicate, { alias }) => {
-          if (foundMap[alias as string] || duplicate) return !duplicate;
-          foundMap[alias as string] = undefined;
-          return true;
-        }, true);
-      },
+      () => this.checkIfDuplicates(assets),
       () => new AssetsGameError("duplicate")
     );
 
-    assert(unresolvedAssets.length, () => new AssetsGameError("empty-assets"));
+    assert(assets.length, () => new AssetsGameError("empty-assets"));
 
-    return unresolvedAssets;
+    return assets;
   }
 }
 
