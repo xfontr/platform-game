@@ -11,33 +11,37 @@ class EntityAnimation<T extends EntityRender<any>> {
     this.entity = entity;
   }
 
-  // TODO: Improve redundant setters. This basically needs to be reactive in a far more efficient way
-  public update(): void {
+  private setInitialValues(): void {
     assert(this.sprite, () => new EntityGameError("animated-sprite-not-found"));
 
-    const { x, y, width, height, animationSpeed, origin } = this.entity.get();
+    const { x, y, width, height, animationSpeed, origin } = this.entity.state;
 
     this.sprite.x = x;
     this.sprite.y = y;
-
     this.sprite.width = width;
     this.sprite.height = height;
-
     this.sprite.animationSpeed = animationSpeed;
     this.sprite.anchor.set(origin);
+    this.sprite.textures = this.entity.state.textures!;
+  }
 
-    const currentFrames = this.entity.getFrames();
+  private subscriber(key: string, newValue: unknown) {
+    if (key === "origin") {
+      this.sprite?.anchor.set(newValue as number);
+      return;
+    }
 
-    if (this.sprite.textures !== currentFrames)
-      this.sprite.textures = currentFrames;
+    this.sprite[key] = newValue;
   }
 
   public init(): AnimatedSprite {
     if (this.sprite) return this.sprite;
 
-    this.sprite = new AnimatedSprite(this.entity.getFrames());
+    this.sprite = new AnimatedSprite(this.entity.state.textures!);
 
-    this.update();
+    this.entity.subscribe(this.subscriber.bind(this));
+
+    this.setInitialValues();
 
     this.sprite.play();
 

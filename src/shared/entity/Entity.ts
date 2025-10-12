@@ -1,33 +1,52 @@
 import type Assets from "../assets/Assets";
-import type { EntityConfig, ModifierType } from "./entities.types";
+import type { EntityConfig, EntityState, ModifierType } from "./entities.types";
 import EntityGameError from "./EntityGameError";
 import assert from "../../utils/assert";
-import { DEFAULT_STATE } from "../../configs/constants";
+import { DEFAULT_MODIFIER } from "../../configs/constants";
 import type { UnresolvedAsset } from "pixi.js";
+import EntityPubSub from "./EntityPubSub";
 
-class Entity<Modifiers extends string = never> {
-  public x = 0;
-  public y = 0;
-  public width: number;
-  public height: number;
-  public origin = 0.5;
-  public animationSpeed = 0.1;
-  public state: Modifiers | typeof DEFAULT_STATE = DEFAULT_STATE;
-  public speed: number;
+const DEFAULT_STATE: Pick<
+  EntityState,
+  "origin" | "animationSpeed" | "x" | "y" | "speed"
+> = {
+  origin: 0.5,
+  animationSpeed: 0.1,
+  x: 0,
+  y: 0,
+  speed: 1,
+};
 
+class Entity<Modifiers extends string = never> extends EntityPubSub {
   public assets?: Assets<Modifiers>;
+  public state: EntityState;
 
-  constructor({ width, height, animationSpeed, origin, speed }: EntityConfig) {
-    this.width = width;
-    this.height = height;
-    this.origin = origin ?? this.origin;
-    this.animationSpeed = animationSpeed ?? this.animationSpeed;
-    this.speed = speed ?? 1;
+  protected modifier: Modifiers | typeof DEFAULT_MODIFIER;
+
+  constructor(config: EntityConfig) {
+    super();
+
+    this.state = { ...DEFAULT_STATE, ...config };
+
+    this.state = new Proxy(this.state, {
+      set: (target, p, newValue) => {
+        const currentValue = this.state[p as keyof typeof this.state];
+        if (currentValue === newValue) return true;
+
+        this.publish(p as keyof typeof this.state, newValue, currentValue);
+
+        target[p as keyof typeof this.state] = newValue;
+
+        return true;
+      },
+    });
+
+    this.modifier = this.modifier = DEFAULT_MODIFIER;
   }
 
   protected getSprite(): UnresolvedAsset[] {
     assert(this.assets, () => new EntityGameError("asset-not-set"));
-    return this.assets.getSprite(this.state);
+    return this.assets.getSprite(this.modifier);
   }
 
   public setAssets<A extends Assets<any>>(assets: A): Entity<ModifierType<A>> {
@@ -35,28 +54,25 @@ class Entity<Modifiers extends string = never> {
     return this as unknown as Entity<ModifierType<A>>;
   }
 
-  public setState(state: Modifiers | typeof DEFAULT_STATE): this {
-    this.state = state;
+  public setState(modifier: Modifiers | typeof DEFAULT_MODIFIER): this {
+    this.modifier = modifier;
     return this;
   }
 
+  public isState<M extends Modifiers | typeof DEFAULT_MODIFIER>(
+    modifier: M
+  ): modifier is M {
+    return this.modifier === modifier;
+  }
+
   public moveX(direction: 1 | -1 | (number & {})) {
-    this.x = this.x + this.speed * direction;
+    const state = this.state;
+    state.x = state.x + state.speed * direction;
   }
 
   public moveY(direction: 1 | -1 | (number & {})) {
-    this.y = this.y + this.speed * direction;
-  }
-
-  public get() {
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height,
-      origin: this.origin,
-      animationSpeed: this.animationSpeed,
-    };
+    const state = this.state;
+    state.y = state.y + state.speed * direction;
   }
 }
 
