@@ -1,27 +1,34 @@
 import type { EntityConfig } from "../../shared/entity/entities.types";
 import EntityRender from "../../shared/entity/EntityRender";
 
-const RUN_SPEED = 1.5;
-
 class Hero extends EntityRender {
   private baseAnimationSpeed: number;
   private baseSpeed: number;
+  private isRunning: boolean = false;
+  private runSpeed: number;
 
-  constructor(config: EntityConfig) {
+  constructor({ runSpeed, ...config }: EntityConfig & { runSpeed: number }) {
     super(config);
 
-    this.baseSpeed = this.speed;
-    this.baseAnimationSpeed = this.animationSpeed;
+    this.runSpeed = runSpeed;
+    this.baseSpeed = this.state.speed;
+    this.baseAnimationSpeed = this.state.animationSpeed;
   }
 
   public run(): void {
-    this.speed = this.baseSpeed * RUN_SPEED;
-    this.animationSpeed = this.baseAnimationSpeed * RUN_SPEED;
+    if (this.isRunning) return;
+
+    this.state.speed = this.baseSpeed * this.runSpeed;
+    this.state.animationSpeed = this.baseAnimationSpeed * this.runSpeed;
+    this.isRunning = true;
   }
 
   public walk(): void {
-    this.speed = this.baseSpeed;
-    this.animationSpeed = this.baseAnimationSpeed;
+    if (!this.isRunning) return;
+
+    this.state.speed = this.baseSpeed;
+    this.state.animationSpeed = this.baseAnimationSpeed;
+    this.isRunning = false;
   }
 }
 

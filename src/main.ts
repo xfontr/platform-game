@@ -6,21 +6,6 @@ import heroInstance from "./entities/hero";
 
 const manifest = new AssetsManifest().add("game", heroInstance.assets!);
 
-/**
- * Each entity has its own textures, sizes, location, and events
- *
- * I don't want to instantiate each entity ad hoc whenever needed. Instead, i need a lib where each
- * entity is already created. Town, tree, character, apple. Whatever.
- *
- * Then, I just import it and run it like:
- *
- * character.play(); // Prints a character in its original location, listens for event listeners, has already right size.
- *
- * So that the game module does not have to worry about these tiny details
- *
- * Basically, I need kind of singletons for each entity
- */
-
 (async () => {
   await app.init(new Application());
   Assets.init({ manifest: manifest.get() });
@@ -28,10 +13,8 @@ const manifest = new AssetsManifest().add("game", heroInstance.assets!);
 
   const canvas = app.get();
 
-  heroInstance.x = canvas.canvas.width / 2;
-  heroInstance.y = canvas.canvas.height / 2;
-
-  const animationSpeed = 0.1;
+  heroInstance.state.x = canvas.canvas.width / 2;
+  heroInstance.state.y = canvas.canvas.height / 2;
 
   const hero = heroInstance.animate(heroInstance);
   canvas.stage.addChild(hero.sprite!);
@@ -57,16 +40,13 @@ const manifest = new AssetsManifest().add("game", heroInstance.assets!);
     // Vertical movement
     if (keys.has("ArrowUp") || keys.has("KeyW")) heroInstance.moveY(-1);
     if (keys.has("ArrowDown") || keys.has("KeyS")) heroInstance.moveY(1);
-
-    hero.update();
   };
 
   const ticker = new Ticker().add(moveHero);
 
   const startWalking = () => {
-    if (heroInstance.state !== "walk") {
+    if (!heroInstance.isState("walk")) {
       heroInstance.setState("walk");
-      hero.update();
       hero.sprite!.play();
     }
     if (!ticker.started) ticker.start();
@@ -74,9 +54,8 @@ const manifest = new AssetsManifest().add("game", heroInstance.assets!);
 
   const stopWalking = () => {
     ticker.stop();
-    if (heroInstance.state !== "default") {
+    if (!heroInstance.isState("default")) {
       heroInstance.setState("default");
-      hero.update();
       hero.sprite!.play();
     }
   };

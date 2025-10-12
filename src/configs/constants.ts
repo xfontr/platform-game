@@ -1,1 +1,1 @@
-export const DEFAULT_STATE = "default" as const;
+export const DEFAULT_MODIFIER = "default" as const;

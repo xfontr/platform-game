@@ -1,7 +1,7 @@
 import { type UnresolvedAsset } from "pixi.js";
 import assert from "../../utils/assert";
 import AssetsGameError from "./AssetsGameError";
-import type { DEFAULT_STATE } from "../../configs/constants";
+import type { DEFAULT_MODIFIER } from "../../configs/constants";
 
 class Assets<Modifiers extends string = never> {
   protected assets: Record<string, UnresolvedAsset[]> = {};
@@ -31,7 +31,7 @@ class Assets<Modifiers extends string = never> {
   /**
    * Pixi does not provide a more strict type, so for now `unknown[]` will have to do.
    */
-  public getSprite(modifier: Modifiers | typeof DEFAULT_STATE) {
+  public getSprite(modifier: Modifiers | typeof DEFAULT_MODIFIER) {
     assert(
       this.assets[modifier]?.length,
       () => new AssetsGameError("empty-sprite")

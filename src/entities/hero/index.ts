@@ -10,6 +10,7 @@ const hero = new Hero({
   width: 30,
   height: 40,
   speed: 3,
+  runSpeed: 1.5,
 }).setAssets(assets);
 
 export default hero;
