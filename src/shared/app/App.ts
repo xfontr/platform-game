@@ -37,7 +37,9 @@ class App extends SizeObserver<HTMLDivElement> {
         background: "black",
         width: clientWidth,
         height: clientHeight,
+        resizeTo: this.element,
       });
+      app.canvas.style.position = "absolute";
     } catch (error) {
       throw new AppGameError(error, "initialization-failed");
     }

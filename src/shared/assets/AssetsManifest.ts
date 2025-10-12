@@ -3,7 +3,7 @@ import {
   type AssetsManifest as Manifest,
   type UnresolvedAsset,
 } from "pixi.js";
-import type AssetsType from "./Assets";
+import type AssetsType from "./BaseAssets";
 import AssetsGameError from "./AssetsGameError";
 import assert from "../../utils/assert";
 
