@@ -1,44 +1,19 @@
-import { Assets as pixiAssets, type AnimatedSpriteFrames } from "pixi.js";
 import Entity from "./Entity";
 import type { EntityConfig, EntityState } from "./entity.types";
-import type { DEFAULT_MODIFIER } from "../../configs/constants";
 import type EntityAnimation from "./EntityAnimation";
 import EntityGameError from "./EntityGameError";
 import assert from "../../utils/assert";
 
 class EntityRender<Modifiers extends string = never> extends Entity<Modifiers> {
-  private cachedTextures: Partial<
-    Record<Modifiers | typeof DEFAULT_MODIFIER, AnimatedSpriteFrames>
-  > = {};
   public animation?: EntityAnimation<this>;
-  declare state: EntityState & { textures?: AnimatedSpriteFrames };
+  declare state: EntityState;
 
   constructor(config: EntityConfig) {
     super(config);
   }
 
-  private getAssets() {
-    return this.getSprite().map(({ alias }) => pixiAssets.get(alias as string));
-  }
-
-  public setTextures(): AnimatedSpriteFrames {
-    const cached = this.cachedTextures[this.modifier];
-
-    if (cached) {
-      this.state.textures = cached;
-      return cached;
-    }
-
-    const newAssets = this.getAssets();
-
-    this.cachedTextures[this.modifier] = newAssets;
-    this.state.textures = newAssets;
-
-    return newAssets;
-  }
-
   protected override onModifierChange(): void {
-    this.setTextures();
+    this.state.textures = this.assets?.setTextures(this.modifier);
     this.animation?.sprite?.play();
   }
 
@@ -48,7 +23,7 @@ class EntityRender<Modifiers extends string = never> extends Entity<Modifiers> {
 
   public startAnimation() {
     assert(this.animation, () => new EntityGameError("animation-not-set"));
-    this.setTextures();
+    this.state.textures = this.assets?.setTextures(this.modifier);
     this.animation.init();
   }
 }

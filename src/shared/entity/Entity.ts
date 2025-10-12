@@ -5,10 +5,7 @@ import type {
   ModifierType,
   WithModifiers,
 } from "./entity.types";
-import EntityGameError from "./EntityGameError";
-import assert from "../../utils/assert";
 import { DEFAULT_MODIFIER } from "../../configs/constants";
-import type { UnresolvedAsset } from "pixi.js";
 import EntityPubSub from "./EntityPubSub";
 import { reactive } from "./entity.utils";
 
@@ -42,11 +39,6 @@ class Entity<Modifiers extends string = never> extends EntityPubSub {
     this.modifier = DEFAULT_MODIFIER;
 
     this.toReactive();
-  }
-
-  protected getSprite(): UnresolvedAsset[] {
-    assert(this.assets, () => new EntityGameError("asset-not-set"));
-    return this.assets.getSprite(this.modifier);
   }
 
   public setAssets<A extends Assets<any>>(
