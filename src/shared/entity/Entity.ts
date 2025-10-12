@@ -1,12 +1,18 @@
 import type Assets from "../assets/Assets";
-import type { EntityConfig, EntityState, ModifierType } from "./entities.types";
+import type {
+  EntityConfig,
+  EntityState,
+  ModifierType,
+  WithModifiers,
+} from "./entity.types";
 import EntityGameError from "./EntityGameError";
 import assert from "../../utils/assert";
 import { DEFAULT_MODIFIER } from "../../configs/constants";
 import type { UnresolvedAsset } from "pixi.js";
 import EntityPubSub from "./EntityPubSub";
+import { reactive } from "./entity.utils";
 
-const DEFAULT_STATE: Pick<
+export const DEFAULT_STATE: Pick<
   EntityState,
   "origin" | "animationSpeed" | "x" | "y" | "speed"
 > = {
@@ -23,25 +29,19 @@ class Entity<Modifiers extends string = never> extends EntityPubSub {
 
   protected modifier: Modifiers | typeof DEFAULT_MODIFIER;
 
+  private toReactive() {
+    this.state = reactive(this.state, (key, newValue, currentValue) => {
+      this.publish(key, newValue, currentValue);
+    });
+  }
+
   constructor(config: EntityConfig) {
     super();
 
     this.state = { ...DEFAULT_STATE, ...config };
+    this.modifier = DEFAULT_MODIFIER;
 
-    this.state = new Proxy(this.state, {
-      set: (target, p, newValue) => {
-        const currentValue = this.state[p as keyof typeof this.state];
-        if (currentValue === newValue) return true;
-
-        this.publish(p as keyof typeof this.state, newValue, currentValue);
-
-        target[p as keyof typeof this.state] = newValue;
-
-        return true;
-      },
-    });
-
-    this.modifier = this.modifier = DEFAULT_MODIFIER;
+    this.toReactive();
   }
 
   protected getSprite(): UnresolvedAsset[] {
@@ -49,17 +49,25 @@ class Entity<Modifiers extends string = never> extends EntityPubSub {
     return this.assets.getSprite(this.modifier);
   }
 
-  public setAssets<A extends Assets<any>>(assets: A): Entity<ModifierType<A>> {
+  public setAssets<A extends Assets<any>>(
+    assets: A
+  ): WithModifiers<this, ModifierType<A>> {
     this.assets = assets;
-    return this as unknown as Entity<ModifierType<A>>;
+    return this as WithModifiers<this, ModifierType<A>>;
   }
 
-  public setState(modifier: Modifiers | typeof DEFAULT_MODIFIER): this {
+  protected onModifierChange(): void {}
+
+  public setModifier(modifier: Modifiers | typeof DEFAULT_MODIFIER): this {
+    if (this.modifier === modifier) return this;
+
     this.modifier = modifier;
+    this.onModifierChange();
+
     return this;
   }
 
-  public isState<M extends Modifiers | typeof DEFAULT_MODIFIER>(
+  public isModifier<M extends Modifiers | typeof DEFAULT_MODIFIER>(
     modifier: M
   ): modifier is M {
     return this.modifier === modifier;

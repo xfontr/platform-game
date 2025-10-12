@@ -1,4 +1,4 @@
-import type { EntityConfig } from "../../shared/entity/entities.types";
+import type { EntityConfig } from "../../shared/entity/entity.types";
 import EntityRender from "../../shared/entity/EntityRender";
 
 class Hero extends EntityRender {
@@ -29,6 +29,15 @@ class Hero extends EntityRender {
     this.state.speed = this.baseSpeed;
     this.state.animationSpeed = this.baseAnimationSpeed;
     this.isRunning = false;
+  }
+
+  public mirror(isLeft: boolean) {
+    const sprite = this.animation?.sprite;
+
+    if (!sprite) return;
+
+    if (isLeft) sprite.scale.x = -Math.abs(sprite.scale.x);
+    if (!isLeft) sprite.scale.x = Math.abs(sprite.scale.x);
   }
 }
 

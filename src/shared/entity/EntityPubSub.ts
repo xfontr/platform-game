@@ -1,9 +1,9 @@
-type Watcher = (key: string, newValue: unknown, oldValue: unknown) => void;
+import type { Watcher } from "./entity.types";
 
 class EntityPubSub {
   private subs = new Set<Watcher>();
 
-  public publish(key: string, newValue: unknown, oldValue: unknown) {
+  protected publish(key: string, newValue: unknown, oldValue: unknown) {
     this.subs.forEach((subscriber) => {
       subscriber(key, newValue, oldValue);
     });
