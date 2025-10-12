@@ -30,6 +30,15 @@ class Hero extends EntityRender {
     this.state.animationSpeed = this.baseAnimationSpeed;
     this.isRunning = false;
   }
+
+  public mirror(isLeft: boolean) {
+    const sprite = this.animation?.sprite;
+
+    if (!sprite) return;
+
+    if (isLeft) sprite.scale.x = -Math.abs(sprite.scale.x);
+    if (!isLeft) sprite.scale.x = Math.abs(sprite.scale.x);
+  }
 }
 
 export default Hero;
