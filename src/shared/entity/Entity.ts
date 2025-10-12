@@ -4,13 +4,13 @@ import type {
   EntityState,
   ModifierType,
   WithModifiers,
-} from "./entities.types";
+} from "./entity.types";
 import EntityGameError from "./EntityGameError";
 import assert from "../../utils/assert";
 import { DEFAULT_MODIFIER } from "../../configs/constants";
 import type { UnresolvedAsset } from "pixi.js";
 import EntityPubSub from "./EntityPubSub";
-import { reactive } from "./entities.utils";
+import { reactive } from "./entity.utils";
 
 export const DEFAULT_STATE: Pick<
   EntityState,

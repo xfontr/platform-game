@@ -1,4 +1,4 @@
-import type { Watcher } from "./entities.types";
+import type { Watcher } from "./entity.types";
 
 class EntityPubSub {
   private subs = new Set<Watcher>();

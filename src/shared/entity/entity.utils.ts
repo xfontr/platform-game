@@ -1,4 +1,4 @@
-import type { Watcher } from "./entities.types";
+import type { Watcher } from "./entity.types";
 
 export function reactive<T extends object>(instance: T, callback: Watcher<T>) {
   return new Proxy(instance, {

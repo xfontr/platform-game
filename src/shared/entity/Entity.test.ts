@@ -1,14 +1,20 @@
 import type { UnresolvedAsset } from "pixi.js";
 import { simulateProduction } from "../../utils/test";
 import Assets from "../assets/Assets";
-import type { EntityConfig, EntityState } from "./entities.types";
+import type { EntityConfig, EntityState } from "./entity.types";
 import Entity, { DEFAULT_STATE } from "./Entity";
 import EntityGameError from "./EntityGameError";
 import { DEFAULT_MODIFIER } from "../../configs/constants";
 
-class EntityTest extends Entity {
+const modifierChange = vi.fn();
+
+class EntityTest<Modifiers extends string = never> extends Entity<Modifiers> {
   getSpriteTest() {
     return this.getSprite();
+  }
+
+  protected override onModifierChange(): void {
+    modifierChange();
   }
 }
 
@@ -32,6 +38,10 @@ const mockUnresolvedAssets: UnresolvedAsset[] = [
     src: "/assets/assets/0.default.png",
   },
 ];
+
+beforeEach(() => {
+  vi.resetAllMocks();
+});
 
 describe("Entity", () => {
   it("should apply default state values", () => {
@@ -132,6 +142,23 @@ describe("Entity", () => {
 
     entity.setModifier(DEFAULT_MODIFIER);
     expect(entity.isModifier(DEFAULT_MODIFIER)).toBeTruthy();
+  });
+
+  it("should trigger a modifier change method", () => {
+    const entity = new EntityTest<"test">(mockEntityConfig);
+
+    entity.setModifier("test");
+
+    expect(modifierChange).toHaveBeenCalledOnce();
+  });
+
+  it("should not trigger a modifier change method if states were the same", () => {
+    const entity = new EntityTest(mockEntityConfig);
+
+    expect(entity.isModifier(DEFAULT_MODIFIER)).toBeTruthy();
+    entity.setModifier(DEFAULT_MODIFIER);
+
+    expect(modifierChange).not.toHaveBeenCalledOnce();
   });
 
   it("should move in the X axis, accounting the state speed", () => {

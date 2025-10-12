@@ -1,6 +1,6 @@
 import { Assets as pixiAssets, type AnimatedSpriteFrames } from "pixi.js";
 import Entity from "./Entity";
-import type { EntityConfig, EntityState } from "./entities.types";
+import type { EntityConfig, EntityState } from "./entity.types";
 import type { DEFAULT_MODIFIER } from "../../configs/constants";
 import type EntityAnimation from "./EntityAnimation";
 import EntityGameError from "./EntityGameError";

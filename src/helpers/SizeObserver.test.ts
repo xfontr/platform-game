@@ -68,7 +68,7 @@ describe("SizeObserver", () => {
   it("disconnects observer on destroy", () => {
     const observer = new SizeObserver(element);
     observer.onResize(vi.fn());
-    observer.onDestroy();
+    observer.destroy();
     expect(mockDisconnect).toHaveBeenCalledTimes(1);
   });
 });

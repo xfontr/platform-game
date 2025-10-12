@@ -1,4 +1,4 @@
-import type { EntityConfig } from "../../shared/entity/entities.types";
+import type { EntityConfig } from "../../shared/entity/entity.types";
 import EntityRender from "../../shared/entity/EntityRender";
 
 class Hero extends EntityRender {
