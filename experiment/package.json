@@ -20,8 +20,5 @@
     "overrides": {
       "vite": "npm:rolldown-vite@7.1.14"
     }
-  },
-  "dependencies": {
-    "pixi.js": "^8.14.0"
   }
 }
