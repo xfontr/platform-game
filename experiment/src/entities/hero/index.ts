@@ -17,3 +17,23 @@ const hero = new Hero({
 hero.setAnimation(new EntityAnimation(hero));
 
 export default hero;
+
+// const hero = new Hero({
+//   width: 30,
+//   height: 40,
+//   speed: 3,
+//   runSpeed: 1.5,
+// })
+//   .setAssets(assets)
+//   .setEntity(new EntityAnimation(hero));
+
+// hero
+//   .addStrategy(
+//     new CollisionStrategy({
+//       destroyOnCollision: true,
+//     })
+//   )
+//   .addStrategy(new MovementStrategy())
+//   .addStrategy(new KeyboardMovementStrategy());
+
+// export default hero;
