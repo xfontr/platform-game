@@ -1,6 +1,6 @@
 import type { UnresolvedAsset } from "pixi.js";
 import { simulateProduction } from "../../utils/test";
-import Assets from "../assets/Assets";
+import Assets from "../assets/BaseAssets";
 import type { EntityConfig, EntityState } from "./entity.types";
 import Entity, { DEFAULT_STATE } from "./Entity";
 import EntityGameError from "./EntityGameError";
@@ -10,7 +10,7 @@ const modifierChange = vi.fn();
 
 class EntityTest<Modifiers extends string = never> extends Entity<Modifiers> {
   getSpriteTest() {
-    return this.getSprite();
+    return this.assets?.getSprite("default");
   }
 
   protected override onModifierChange(): void {

@@ -21,16 +21,11 @@ class EntityAnimation<T extends EntityRender<any>> {
     this.sprite.width = width;
     this.sprite.height = height;
     this.sprite.animationSpeed = animationSpeed;
-    this.sprite.anchor.set(origin);
+    this.sprite.anchor = origin;
     this.sprite.textures = this.entity.state.textures!;
   }
 
   private subscriber(key: string, newValue: unknown) {
-    if (key === "origin") {
-      this.sprite?.anchor.set(newValue as number);
-      return;
-    }
-
     this.sprite[key] = newValue;
   }
 

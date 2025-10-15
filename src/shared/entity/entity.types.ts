@@ -1,5 +1,5 @@
 import type { AnimatedSpriteFrames } from "pixi.js";
-import type Assets from "../assets/Assets";
+import type Assets from "../assets/BaseAssets";
 import type EntityRender from "./EntityRender";
 
 export interface EntityConfig {
