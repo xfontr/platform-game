@@ -1,7 +1,10 @@
 import { DomainError } from "../errors/errors.mixins";
 
 export type ECS = "ECS";
-export type Error = "component-not-found" | "component-already-added";
+export type Error =
+  | "component.delete.not.found"
+  | "component.get.not.found"
+  | "component.add.added";
 
 const ECSError = DomainError<Error, ECS>("ECS");
 

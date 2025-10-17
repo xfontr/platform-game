@@ -5,25 +5,33 @@ import ECSError from "./ECSError";
 import type { Entity as EntityContract } from "./types/Entity";
 
 class Entity implements EntityContract {
+  public isDirty = false;
   private components = new Map<ComponentRef, Component>();
 
-  add<T extends Component>(component: T): this {
+  public add<T extends Component>(component: T): this {
     assert(
       () => !this.components.get(component.constructor),
-      () => new ECSError("component-already-added")
+      () => new ECSError("component.add.added")
     );
 
     this.components.set(component.constructor, component);
+    this.isDirty ||= true;
     return this;
   }
 
-  has<T extends Component>(component: T): boolean {
+  public has<T extends Component>(component: T): boolean {
     return this.components.has(component.constructor);
   }
 
-  get<T extends Component>(component: T): T {
+  public delete<T extends Component>(component: T): void {
+    const found = this.components.delete(component.constructor);
+    assert(found, () => new ECSError("component.delete.not.found"));
+    this.isDirty ||= found;
+  }
+
+  public get<T extends Component>(component: T): T {
     const found = this.components.get(component.constructor) as T | undefined;
-    assert(found, () => new ECSError("component-not-found"));
+    assert(found, () => new ECSError("component.get.not.found"));
     return found;
   }
 }

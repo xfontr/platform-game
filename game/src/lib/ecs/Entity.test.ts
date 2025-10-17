@@ -21,10 +21,11 @@ describe("Entity", () => {
     const entity = new Entity().add(component);
 
     expect(entity.has(component)).toBeTruthy();
+    expect(entity.isDirty).toBeTruthy();
   });
 
   it("should not allow adding already added components", () => {
-    const expectedError = new ECSError("component-already-added");
+    const expectedError = new ECSError("component.add.added");
 
     const firstComponent = new MockComponent();
     const secondComponent = new MockComponent();
@@ -56,7 +57,7 @@ describe("Entity", () => {
   });
 
   it("should throw error if the requested component is not found", () => {
-    const expectedError = new ECSError("component-not-found");
+    const expectedError = new ECSError("component.get.not.found");
     const component = new MockComponent();
 
     const entity = new Entity();
@@ -72,5 +73,40 @@ describe("Entity", () => {
     simulateProduction(() => {
       expect(() => entity.get(component)).not.toThrowError();
     });
+  });
+
+  it("should delete the requested component", () => {
+    const component = new MockComponent();
+
+    const entity = new Entity();
+
+    entity.add(component);
+    entity.delete(component);
+
+    expect(entity.has(component)).toBeFalsy();
+    expect(entity.isDirty).toBeTruthy();
+  });
+
+  it("should throw error if does not find requested component to delete", () => {
+    const expectedError = new ECSError("component.delete.not.found");
+    const component = new MockComponent();
+
+    const entity = new Entity();
+
+    expect(() => entity.delete(component)).toThrowError(expectedError);
+    expect(entity.isDirty).toBeFalsy();
+  });
+
+  it("should not throw error if does not find requested component to delete in production", () => {
+    const expectedError = new ECSError("component.delete.not.found");
+    const component = new MockComponent();
+
+    const entity = new Entity();
+
+    simulateProduction(() => {
+      expect(() => entity.delete(component)).not.toThrowError(expectedError);
+    });
+
+    expect(entity.isDirty).toBeFalsy();
   });
 });
