@@ -1,4 +1,4 @@
-import { DomainError } from "../../shared/errors/errors.mixins";
+import { DomainError } from "../errors/errors.mixins";
 
 export type Context = "ASSETS";
 export type Error =

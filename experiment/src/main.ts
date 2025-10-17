@@ -1,41 +1,52 @@
 import "./style.css";
 import { Application, Assets, Graphics, Ticker } from "pixi.js";
-import app from "./shared/app";
+import mainApp from "./shared/app";
 import AssetsManifest from "./shared/assets/AssetsManifest";
 import hero from "./entities/hero";
 import { initDevtools } from "@pixi/devtools";
+import { createSceneLayers } from "./REFACTOR.main.helpers";
+import CollisionSystem from "./shared/systems/CollisionSystem";
 
 const manifest = new AssetsManifest().add("game", hero.assets!);
 
 (async () => {
-  await app.init(new Application());
+  await mainApp.init(new Application());
 
   Assets.init({ manifest: manifest.get() });
 
   await Assets.loadBundle("game");
 
-  const canvas = app.get();
+  const app = mainApp.get();
 
-  initDevtools({ app: canvas });
-  //
-  const box = new Graphics();
-  const boxSize = 200;
-  const centerX = canvas.canvas.width / 2;
-  const centerY = canvas.canvas.height / 2;
+  initDevtools({ app });
 
-  box
-    .stroke({ width: 2, color: 0xffffff, alpha: 1 }) // draw white border
-    .rect(centerX - boxSize / 2, centerY - boxSize / 2, boxSize, boxSize)
-    .stroke(); // finalize stroke
-  canvas.stage.addChild(box);
-  //
+  const layers = createSceneLayers(app);
 
-  hero.state.x = canvas.canvas.width / 2;
-  hero.state.y = canvas.canvas.height / 2;
+  const collisionSystem = new CollisionSystem(
+    layers.obstaclesLayer,
+    layers.entitiesLayer
+  );
+
+  // 💙 blue box obstacle
+  const box = new Graphics().rect(0, 0, 100, 100).fill({ color: 0x0000ff });
+  box.position.set(100, 100);
+  box.onCollision = () => {
+    console.log("box be colliding");
+  };
+  layers.obstaclesLayer.addChild(box);
+
+  hero.state.x = app.canvas.width / 2;
+  hero.state.y = app.canvas.height / 2;
 
   hero.startAnimation();
+
   const { sprite } = hero.animation!;
-  canvas.stage.addChild(sprite!);
+
+  app.ticker.add(() => {
+    collisionSystem.update();
+  });
+
+  layers.entitiesLayer.addChild(sprite!);
 
   needsRefactorHeroMovingLogic();
 
@@ -61,30 +72,9 @@ const manifest = new AssetsManifest().add("game", hero.assets!);
       // Vertical movement
       if (keys.has("ArrowUp") || keys.has("KeyW")) hero.moveY(-1);
       if (keys.has("ArrowDown") || keys.has("KeyS")) hero.moveY(1);
-
-      // Collision boundaries for hero inside the 200x200 box
-      const heroSprite = hero.animation?.sprite;
-      if (heroSprite) {
-        const halfBox = boxSize / 2;
-        const halfHero = heroSprite.width / 2;
-
-        // boundaries of the box
-        const minX = centerX - halfBox + halfHero;
-        const maxX = centerX + halfBox - halfHero;
-        const minY = centerY - halfBox + halfHero;
-        const maxY = centerY + halfBox - halfHero;
-
-        // clamp hero position
-        hero.state.x = Math.min(Math.max(hero.state.x, minX), maxX);
-        hero.state.y = Math.min(Math.max(hero.state.y, minY), maxY);
-
-        // update sprite position (if not already bound)
-        heroSprite.x = hero.state.x;
-        heroSprite.y = hero.state.y;
-      }
     };
 
-    const ticker = new Ticker().add(moveHero);
+    const ticker = app.ticker.add(moveHero);
 
     const startWalking = () => {
       hero.setModifier("walk");

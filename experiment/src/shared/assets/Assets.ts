@@ -8,7 +8,12 @@ class Assets<Modifiers extends string = never> extends BaseAssets<Modifiers> {
     Record<Modifiers | typeof DEFAULT_MODIFIER, AnimatedSpriteFrames>
   > = {};
 
-  public setTextures(
+  // TODO: SpriteSheets should be implemented here
+  // The textures attribute can take either, a succession of images or a sheet
+  // So we just have to interpret that the file is a sprite sheet + we later need
+  // to grab its data from a json
+
+  public getTextures(
     modifier: Modifiers | typeof DEFAULT_MODIFIER
   ): AnimatedSpriteFrames {
     const cached = this.cachedTextures[modifier];

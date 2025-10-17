@@ -2,10 +2,11 @@ import { AnimatedSprite } from "pixi.js";
 import type EntityRender from "./EntityRender";
 import EntityGameError from "./EntityGameError";
 import assert from "../../utils/assert";
+import { EntitySprite } from "./entity.mixins";
 
 class EntityAnimation<T extends EntityRender<any>> {
   private entity: T;
-  public sprite?: AnimatedSprite;
+  public sprite?: EntitySprite;
 
   constructor(entity: T) {
     this.entity = entity;
@@ -32,7 +33,7 @@ class EntityAnimation<T extends EntityRender<any>> {
   public init(): AnimatedSprite {
     if (this.sprite) return this.sprite;
 
-    this.sprite = new AnimatedSprite(this.entity.state.textures!);
+    this.sprite = new EntitySprite(this.entity.state.textures!);
 
     this.entity.subscribe(this.subscriber.bind(this));
 

@@ -13,7 +13,7 @@ class EntityRender<Modifiers extends string = never> extends Entity<Modifiers> {
   }
 
   protected override onModifierChange(): void {
-    this.state.textures = this.assets?.setTextures(this.modifier);
+    this.state.textures = this.assets?.getTextures(this.modifier);
     this.animation?.sprite?.play();
   }
 
@@ -23,7 +23,7 @@ class EntityRender<Modifiers extends string = never> extends Entity<Modifiers> {
 
   public startAnimation() {
     assert(this.animation, () => new EntityGameError("animation-not-set"));
-    this.state.textures = this.assets?.setTextures(this.modifier);
+    this.state.textures = this.assets?.getTextures(this.modifier);
     this.animation.init();
   }
 }
