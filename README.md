@@ -1,3 +1,5 @@
+A few quick guidelines from ChatGPT. I might use this to grasp the basic idea at least.
+
 # 🧠 Philosophy First
 
 PIXI is a **rendering engine**, not a game engine.

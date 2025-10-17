@@ -1,6 +1,8 @@
 # This was a first try intro Pixi
 
-I actually kinda liked the outcome but I very quickly realised this was not going to scale well. I'm still storing it apart, just for the memories.
+I did not know about ECS when I started this. It eventually came up and soon enough I realised I was not going to reinvent the wheel with a first try.
+
+I actually kinda liked the outcome, but I also realised this was not going to scale well. I'm still storing it apart, just for the memories. A few utils and the asset management were kinda satisfying to develop.
 
 **Old readme:**
 
