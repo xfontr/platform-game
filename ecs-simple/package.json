@@ -1,5 +1,5 @@
 {
-  "name": "platform-game",
+  "name": "game",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -10,7 +10,8 @@
   },
   "devDependencies": {
     "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@7.1.14"
+    "vite": "npm:rolldown-vite@7.1.14",
+    "vitest": "^3.2.4"
   },
   "pnpm": {
     "overrides": {
